@@ -21,25 +21,29 @@ parser = argparse.ArgumentParser(description="Ai chat bot")
 parser.add_argument("user_prompt",type=str,help="Enter user prompt")
 args = parser.parse_args()
 
+# User messages stored
+messages=[
+    {"role": "user", "content": args.user_prompt},
+]
 
-response = client.chat.completions.create(
-    model="openrouter/free",
-    messages=[
-        {
-            "role": "user",
-            "content": args.user_prompt
-        }
-    ],
-)
+def generate_content(client: OpenAI,messages: list)-> None:
+    response = client.chat.completions.create(
+        model="openrouter/free",
+        messages=messages,
+    )
+    if not response.usage:
+        raise RuntimeError("Failed API request")
+
+    # Model output info
+    print(f"""
+    User prompt: {args.user_prompt}
+    Prompt tokens: {response.usage.prompt_tokens}
+    Response tokens: {response.usage.completion_tokens}
+    Response:
+    {response.choices[0].message.content}""")
 
 
-if not response.usage:
-    raise RuntimeError("Failed API request")
+# Call 1
+generate_content(client,messages)
 
-# Model output info
-print(f"""User prompt: {args.user_prompt}
-Prompt tokens: {response.usage.prompt_tokens}
-Response tokens: {response.usage.completion_tokens}
-Response:
-{response.choices[0].message.content}""")
 
