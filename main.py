@@ -19,6 +19,7 @@ client = OpenAI(
 # Parser object creation
 parser = argparse.ArgumentParser(description="Ai chat bot")
 parser.add_argument("user_prompt",type=str,help="Enter user prompt")
+parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
 # User messages stored
@@ -35,10 +36,15 @@ def generate_content(client: OpenAI,messages: list)-> None:
         raise RuntimeError("Failed API request")
 
     # Model output info
+    ## Verbose included True
+    if args.verbose:
+        print(f"""
+        User prompt: {args.user_prompt}
+        Prompt tokens: {response.usage.prompt_tokens}
+        Response tokens: {response.usage.completion_tokens}""")
+
+    ## If not verbose
     print(f"""
-    User prompt: {args.user_prompt}
-    Prompt tokens: {response.usage.prompt_tokens}
-    Response tokens: {response.usage.completion_tokens}
     Response:
     {response.choices[0].message.content}""")
 
