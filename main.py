@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv # locally stores in memeory the api key
 from openai import OpenAI
+import argparse
+
 
 load_dotenv()
 api_key = os.environ.get("OPENROUTER_API_KEY")
@@ -14,13 +16,18 @@ client = OpenAI(
     api_key=api_key
 )
 
-user_prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+# Parser object creation
+parser = argparse.ArgumentParser(description="Ai chat bot")
+parser.add_argument("user_prompt",type=str,help="Enter user prompt")
+args = parser.parse_args()
+
+
 response = client.chat.completions.create(
     model="openrouter/free",
     messages=[
         {
             "role": "user",
-            "content": user_prompt,
+            "content": args.user_prompt
         }
     ],
 )
@@ -30,7 +37,7 @@ if not response.usage:
     raise RuntimeError("Failed API request")
 
 # Model output info
-print(f"""User prompt: {user_prompt}
+print(f"""User prompt: {args.user_prompt}
 Prompt tokens: {response.usage.prompt_tokens}
 Response tokens: {response.usage.completion_tokens}
 Response:
