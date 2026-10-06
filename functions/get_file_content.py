@@ -21,4 +21,22 @@ def get_file_content(working_directory: str, file_path: str) -> str:
         except Exception as Error:
             return f'Error: {Error}'
                      
-                     
+def write_file(working_directory: str, file_path: str, content: str) -> str:
+    try:
+        abs_path = os.path.abspath(working_directory)
+        target_dir = os.path.normpath(os.path.join(abs_path,file_path))
+
+        valid_target = os.path.commonpath([abs_path, target_dir]) == abs_path
+        if not valid_target:
+            return f'Error: Cannot write to "{file_path}" as it is outside the permitted working directory'
+        elif os.path.isdir(target_dir):
+            return f'Error: Cannot write to "{file_path}" as it is a directory'
+        else:
+            os.makedirs(os.path.dirname(target_dir), exist_ok=True)
+                
+             # Open teh file
+            with open(target_dir, "w") as f:
+                f.write(content)
+            return f'Successfully wrote to "{file_path}" ({len(content)} characters written)' # Feedback loops
+    except Exception as error:
+        return f'Error: {error}'
