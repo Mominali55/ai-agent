@@ -1,0 +1,1 @@
+MAX_CHARS = 10000 # So that we dont burn to much tokens
